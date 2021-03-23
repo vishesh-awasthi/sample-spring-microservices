@@ -27,14 +27,14 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public List<Country> getCountries() {
         log.info("Getting country list ...");
-        return Optional.ofNullable(getCountryList())
+        return Optional.of(getCountryList())
                 .orElse(Collections.emptyList());
     }
 
     /**
      * @param id represents unique uuid
      * @return {@link Country}
-     * @throws CountryNotFoundException
+     * @throws CountryNotFoundException if country not found
      */
     @Override
     public Country getCountryById(String id) throws CountryNotFoundException {
@@ -49,7 +49,7 @@ public class CountryServiceImpl implements CountryService {
     /**
      * @param name represents country full name
      * @return {@link Country}
-     * @throws CountryNotFoundException
+     * @throws CountryNotFoundException if country not found
      */
     @Override
     public Country getCountryByName(String name) throws CountryNotFoundException {
@@ -64,7 +64,7 @@ public class CountryServiceImpl implements CountryService {
     /**
      * @param alphaCode3 represents unique country code
      * @return {@link Country}
-     * @throws CountryNotFoundException
+     * @throws CountryNotFoundException if country not found
      */
     @Override
     public Country getCountryByCode(String alphaCode3, Boolean statesIncluded) throws CountryNotFoundException {
@@ -75,7 +75,7 @@ public class CountryServiceImpl implements CountryService {
                 .findFirst()
                 .orElseThrow(() -> new CountryNotFoundException("Country not found with name :" + alphaCode3));
         if (statesIncluded) {
-            country.setStates(stateClient.getStates(alphaCode3.toUpperCase(Locale.ROOT)));
+            country.setStates(stateClient.getStates(alphaCode3.toUpperCase(Locale.ROOT)).getBody());
         }
         return country;
     }
