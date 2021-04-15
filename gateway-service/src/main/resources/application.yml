@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:9000}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: countryservice
+          uri: lb://COUNTRY-SERVICE
+          predicates:
+            - Path=/country-service/**
+        - id: stateservice
+          uri: lb://STATE-SERVICE
+          predicates:
+            - Path=/state-service/**

@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -70,14 +74,22 @@ public class CountryServiceImpl implements CountryService {
     public Country getCountryByCode(String alphaCode3, Boolean statesIncluded) throws CountryNotFoundException {
         log.info("Getting country with alphaCode3 : {} ", alphaCode3);
         Country country = getCountryList()
-                .stream()
-                .filter(countries -> countries.getAlpha3Code().equals(alphaCode3.toUpperCase(Locale.ROOT)))
-                .findFirst()
-                .orElseThrow(() -> new CountryNotFoundException("Country not found with name :" + alphaCode3));
-        if (statesIncluded) {
-            country.setStates(stateClient.getStates(alphaCode3.toUpperCase(Locale.ROOT)).getBody());
+            .stream()
+            .filter(countries -> countries.getAlpha3Code().equals(alphaCode3.toUpperCase(Locale.ROOT)))
+            .findFirst()
+            .orElseThrow(() -> new CountryNotFoundException("Country not found with name :" + alphaCode3));
+        if (Boolean.TRUE.equals(statesIncluded)) {
+            getStatesWithCountryCode(alphaCode3, country);
         }
         return country;
+    }
+
+    private void getStatesWithCountryCode(String alphaCode3, Country country) {
+        try {
+            country.setStates(stateClient.getStates(alphaCode3.toUpperCase(Locale.ROOT)).getBody());
+        } catch (Exception e) {
+            log.error("Error occurred while retrieving the state for country with alpha3Code :{}", alphaCode3, e);
+        }
     }
 
 }

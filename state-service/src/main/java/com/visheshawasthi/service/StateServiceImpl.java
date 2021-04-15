@@ -5,7 +5,10 @@ import com.visheshawasthi.model.State;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,7 +16,7 @@ import java.util.stream.Stream;
 @Service
 public class StateServiceImpl implements StateService {
 
-    private Map<CountryCode, List<State>> states;
+    private final Map<CountryCode, List<State>> states;
 
     public StateServiceImpl() {
         List<State> indiaStates = List.of(
@@ -29,11 +32,20 @@ public class StateServiceImpl implements StateService {
         );
 
         List<State> nepalStates = List.of(
-                new State(UUID.randomUUID().toString(), "Arun Kshetra", CountryCode.NPL),
-                new State(UUID.randomUUID().toString(), "Janakpur Kshetra", CountryCode.NPL),
-                new State(UUID.randomUUID().toString(), "Gandak Kshetra", CountryCode.NPL)
+            new State(UUID.randomUUID().toString(), "Arun Kshetra", CountryCode.NPL),
+            new State(UUID.randomUUID().toString(), "Janakpur Kshetra", CountryCode.NPL),
+            new State(UUID.randomUUID().toString(), "Gandak Kshetra", CountryCode.NPL)
         );
         states = groupStatesByCountry(indiaStates, canadaStates, nepalStates);
+    }
+
+    /**
+     * get the list of states group by country code.
+     *
+     * @return {@link List<State>}
+     */
+    public Map<CountryCode, List<State>> getStates() {
+        return states;
     }
 
     /**

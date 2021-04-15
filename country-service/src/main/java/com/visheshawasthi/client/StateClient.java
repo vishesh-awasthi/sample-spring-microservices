@@ -11,6 +11,6 @@ import java.util.List;
 @FeignClient("state-service")
 public interface StateClient {
 
-    @GetMapping("/api/v1/states")
+    @GetMapping("/state-service/api/v1/states")
     ResponseEntity<List<State>> getStates(@RequestParam("code") String alpha3code);
 }

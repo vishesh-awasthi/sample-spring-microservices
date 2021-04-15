@@ -15,7 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/states")
 public class StateController {
 
-    private StateService stateService;
+    private final StateService stateService;
+
+    @GetMapping("/all")
+    public ResponseEntity getStates() {
+        return new ResponseEntity(stateService.getStates(), HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity getStatesByCountryCode(@RequestParam("code") CountryCode alpha3Code) {
