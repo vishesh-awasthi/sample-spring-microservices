@@ -8,7 +8,11 @@ eureka:
 
 spring:
   application:
-    name: gateway-service
+    name: GATEWAY-SERVICE
+  boot:
+    admin:
+      client:
+        url: ${SPRING_ADMIN_URL:http://localhost:8888}
   cloud:
     gateway:
       routes:
@@ -20,3 +24,9 @@ spring:
           uri: lb://STATE-SERVICE
           predicates:
             - Path=/state-service/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
