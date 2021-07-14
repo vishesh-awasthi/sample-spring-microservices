@@ -3,22 +3,18 @@ package com.visheshawasthi.service;
 import com.visheshawasthi.client.StateClient;
 import com.visheshawasthi.exception.CountryNotFoundException;
 import com.visheshawasthi.model.Country;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class CountryServiceImpl implements CountryService {
 
-    @Autowired
-    private StateClient stateClient;
+    private final StateClient stateClient;
 
     private List<Country> getCountryList() {
         return List.of(
@@ -74,10 +70,10 @@ public class CountryServiceImpl implements CountryService {
     public Country getCountryByCode(String alphaCode3, Boolean statesIncluded) throws CountryNotFoundException {
         log.info("Getting country with alphaCode3 : {} ", alphaCode3);
         Country country = getCountryList()
-            .stream()
-            .filter(countries -> countries.getAlpha3Code().equals(alphaCode3.toUpperCase(Locale.ROOT)))
-            .findFirst()
-            .orElseThrow(() -> new CountryNotFoundException("Country not found with name :" + alphaCode3));
+                .stream()
+                .filter(countries -> countries.getAlpha3Code().equals(alphaCode3.toUpperCase(Locale.ROOT)))
+                .findFirst()
+                .orElseThrow(() -> new CountryNotFoundException("Country not found with name :" + alphaCode3));
         if (Boolean.TRUE.equals(statesIncluded)) {
             getStatesWithCountryCode(alphaCode3, country);
         }
@@ -85,11 +81,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     private void getStatesWithCountryCode(String alphaCode3, Country country) {
-        try {
-            country.setStates(stateClient.getStates(alphaCode3.toUpperCase(Locale.ROOT)).getBody());
-        } catch (Exception e) {
-            log.error("Error occurred while retrieving the state for country with alpha3Code :{}", alphaCode3, e);
-        }
+        country.setStates(stateClient.getStates(alphaCode3.toUpperCase(Locale.ROOT)).getBody());
     }
 
 }

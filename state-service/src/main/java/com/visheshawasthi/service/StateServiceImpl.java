@@ -1,14 +1,12 @@
 package com.visheshawasthi.service;
 
+import com.google.common.collect.ImmutableList;
 import com.visheshawasthi.model.CountryCode;
 import com.visheshawasthi.model.State;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,25 +16,30 @@ public class StateServiceImpl implements StateService {
 
     private final Map<CountryCode, List<State>> states;
 
-    public StateServiceImpl() {
-        List<State> indiaStates = List.of(
+    private StateServiceImpl() {
+        List<State> indiaStates = new ArrayList<>(ImmutableList.of(
                 new State(UUID.randomUUID().toString(), "Punjab", CountryCode.IND),
                 new State(UUID.randomUUID().toString(), "Haryana", CountryCode.IND),
                 new State(UUID.randomUUID().toString(), "Tamil Nadu", CountryCode.IND)
-        );
+        ));
 
-        List<State> canadaStates = List.of(
+        List<State> canadaStates = new ArrayList<>(ImmutableList.of(
                 new State(UUID.randomUUID().toString(), "Nunavut", CountryCode.CAN),
                 new State(UUID.randomUUID().toString(), "Quebec", CountryCode.CAN),
                 new State(UUID.randomUUID().toString(), "Ontario", CountryCode.CAN)
-        );
+        ));
 
-        List<State> nepalStates = List.of(
+        List<State> nepalStates = new ArrayList<>(ImmutableList.of(
             new State(UUID.randomUUID().toString(), "Arun Kshetra", CountryCode.NPL),
             new State(UUID.randomUUID().toString(), "Janakpur Kshetra", CountryCode.NPL),
             new State(UUID.randomUUID().toString(), "Gandak Kshetra", CountryCode.NPL)
-        );
-        states = groupStatesByCountry(indiaStates, canadaStates, nepalStates);
+        ));
+
+        //TODO: bad code :P
+        indiaStates.addAll(canadaStates);
+        indiaStates.addAll(nepalStates);
+
+        states = groupStatesByCountry(indiaStates);
     }
 
     /**
@@ -58,7 +61,7 @@ public class StateServiceImpl implements StateService {
         return states.get(countryCode);
     }
 
-    private Map<CountryCode, List<State>> groupStatesByCountry(List<State>... states) {
+    private Map<CountryCode, List<State>> groupStatesByCountry(List<State> states) {
         return Stream.of(states)
                 .flatMap(Collection::stream)
                 .collect(Collectors.groupingBy(State::getCountryCode));
